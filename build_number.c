@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *buildnumber(char a, char b)
+char *build_number(char a, char b)
 {
 	char *str;
 
