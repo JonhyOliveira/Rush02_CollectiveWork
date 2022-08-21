@@ -1,3 +1,10 @@
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "rush02.h"
+#include <stdio.h>
+
+
 void	print_mag(int mag)
 {
 	char	*str;

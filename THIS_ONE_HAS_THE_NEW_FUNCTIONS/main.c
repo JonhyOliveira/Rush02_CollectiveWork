@@ -1,3 +1,9 @@
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "rush02.h"
+#include <stdio.h>
+
 int	hundreds(char hundred, int before)
 {
 	if (hundred != '0')
