@@ -48,6 +48,17 @@ void	read_line(char *buf, int file_descriptor, int *done)
 	*buf = 0;
 }
 
+char	*get_key(char *line)
+{
+	while (*line == ' ' || (*line >= '0' && *line <= '9'))
+		line++;
+	if (*line++ != ':')
+		return ((char *) 0);
+	while (*line == ' ')
+		line++;
+	return (ft_strdup_printable(line));
+}
+
 char	*find_key(char *file, char *key)
 {
 	int		done;
@@ -55,29 +66,23 @@ char	*find_key(char *file, char *key)
 	char	*line;
 	char	*value;
 
-	value = (char *) 0;
 	file_descriptor = open(file, O_RDONLY);
-	if (file_descriptor > 0)
+	if (file_descriptor < 0)
+		return ((char *) -1);
+	line = (char *) malloc(LINE_MAX_LENGTH);
+	if (!line)
+		return ((char *) -1);
+	done = 0;
+	value = (char *) 0;
+	while (!done)
 	{
-		done = 0;
-		line = (char *) malloc(LINE_MAX_LENGTH);
-		while (!done)
-		{
-			read_line(line, file_descriptor, &done);
-			if (match_nbr(line, key))
-			{
-				while (*line == ' ' || (*line >= '0' && *line <= '9'))
-					line++;
-				if (*line++ != ':')
-					continue ;
-				while (*line == ' ')
-					line++;
-				value = ft_strdup_printable(line);
-				break ;
-			}
-		}
-		close(file_descriptor);
-		return (value);
+		read_line(line, file_descriptor, &done);
+		if (match_nbr(line, key))
+			value = get_key(line);
+		if (value)
+			done = 1;
 	}
-	return ((char *) 0);
+	free(line);
+	close(file_descriptor);
+	return (value);
 }
