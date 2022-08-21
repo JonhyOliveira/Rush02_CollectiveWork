@@ -1,3 +1,7 @@
+/*   Updated: 2022/08/21 11:55:15 by joaooliv         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -5,19 +9,35 @@
 
 #define LINE_MAX_LENGTH 100
 
-//void	clear_str(char *str, int alloc_size)
-//{
-//	int	i;
-//   
-//	i = 0;
-//	while (i < alloc_size)
-//	{
-//		str[i] = 0;
-//		i++;
-//	}
-//}
+// checks if a is printable
+int	ft_str_is_printable(char c);
 
-void	read_line(char *buf, int alloc_size, int file_descriptor, int *done)
+// gets a str's size
+int ft_strlen(char *str); 
+
+// receives a NULL terminated string and duplicates to heap, 
+// returning a pointer to it
+// or a NULL pointer if it's not printable
+char	*ft_strdup_printable(char *src)
+{
+	char	*dest;
+	char	*orig_dest;
+
+	orig_dest = (char *) malloc(sizeof(char) * (ft_strlen(src) + 1));
+	dest = orig_dest;
+	if (dest)
+	{
+		while (*src >= 32 && *src < 127)
+		{
+			*dest++ = *src++;
+		}
+		*dest = 0;
+	}
+	return (orig_dest);
+}
+
+// reads a line from a file to the buffer
+void	read_line(char *buf, int file_descriptor, int *done)
 {
 	read(file_descriptor, buf, 1);
 	while (*buf != '\n' && *buf != 0)
@@ -30,11 +50,7 @@ void	read_line(char *buf, int alloc_size, int file_descriptor, int *done)
 	*buf = 0;
 }
 
-int	is_space(char c)
-{
-	return ((c >= 9 && c <= 13) || c == ' ');
-}
-
+// matchs two number strings
 int	match_nbr(char *str, char *to_find)
 {
 	if (!*to_find && (*str < '0' || *str > '9' ))
@@ -46,8 +62,9 @@ int	match_nbr(char *str, char *to_find)
 	return (0);
 }
 
-char	*ft_strdup(char *src);
-
+// finds a key in a dictionary file (FREE ME)
+// returns 0 if didnt find.
+// returns -1 if couldn't open file
 char	*find_key(char *file, char *key)
 {
 	int		done;
@@ -57,24 +74,29 @@ char	*find_key(char *file, char *key)
 
 	value = (char *) 0;
 	file_descriptor = open(file, O_RDONLY);
-	done = 0;
-	line = (char *) malloc(LINE_MAX_LENGTH);
-	while (!done)
+	if (file_descriptor > 0)
 	{
-		read_line(line, LINE_MAX_LENGTH, file_descriptor, &done);
-		if (match_nbr(line, key))
+		done = 0;
+		line = (char *) malloc(LINE_MAX_LENGTH);
+		while (!done)
 		{
-			while (is_space(*line) || (*line >= '0' && *line <= '9'))
-				line++;
-			if (*line++ != ':')
-				continue;
-			while (is_space(*line))
-				line++;
-			value = ft_strdup(line);
+			read_line(line, file_descriptor, &done);
+			if (match_nbr(line, key))
+			{
+				while (*line == ' ' || (*line >= '0' && *line <= '9'))
+					line++;
+				if (*line++ != ':')
+					continue;
+				while (*line == ' ')
+					line++;
+				value = ft_strdup_printable(line);
+				break;
+			}
 		}
+		close(file_descriptor);
+		return (value);
 	}
-	close(file_descriptor);
-	return (value);
+	return ((char *) 0);
 }
 
 #include <stdio.h>
@@ -82,6 +104,8 @@ int	main()
 {
 	char	*file_path;
 
-	file_path = "dict";
-	printf("%s", find_key("dict", "123"));
+	file_path = "dict3.dict";
+	printf("%s\n", find_key(file_path, "2"));
+	printf("%s\n", find_key(file_path, "4"));
+	printf("%s\n", find_key(file_path, "2222222222222222222222222222222222222222"));
 }
