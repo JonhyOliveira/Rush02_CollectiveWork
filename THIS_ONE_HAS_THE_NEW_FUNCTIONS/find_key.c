@@ -1,3 +1,10 @@
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "rush02.h"
+#include <stdio.h>
+
+#define LINE_MAX_LENGTH 100
 
 int	match_nbr(char *str, char *to_find)
 {

@@ -13,7 +13,7 @@ void	print_mag(int mag)
 		i++;
 	}
 	str[i] = '\0';
-	to_print = find_key("numbers_specific.dict", str);
+	to_print = find_key("numbers.dict", str);
 	free(str);
 	ft_putstr(to_print);
 	free(to_print);
@@ -37,7 +37,7 @@ void	print_nb(char a, char b)
 		str[1] = b;
 		str[2] = '\0';				
 	}
-	to_print = find_key("numbers_specific.dict", str);
+	to_print = find_key("numbers.dict", str);
 	free(str);
 	ft_putstr(to_print);
 	free(to_print);
